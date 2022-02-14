@@ -29,7 +29,7 @@ scraper = cloudscraper.create_scraper()
 for key, values in dict_urls.items():
     print(str(key))
 
-    html = scraper.get(key, headers = {"User-agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"})
+    html = scraper.get(key, headers={"User-agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"})
     soup = BeautifulSoup(html.text)
 
     metatitle = (soup.find('title')).get_text()
@@ -72,13 +72,38 @@ number=2
 
 for key, values in dict_urls.items():
     ws1.cell(row=1, column=1).value= "URL"
+    ws1.cell(row=1, column=2).value = "KEYWORD"
+    ws1.cell(row=1, column=3).value = "RANKING"
+    ws1.cell(row=1, column=4).value = "SEARCHES"
+    ws1.cell(row=1, column=5).value = "Metatitle Occurrence"
+    ws1.cell(row=1, column=6).value = "Metadescription Occurrence"
+    ws1.cell(row=1, column=7).value = "H1 Occurrence"
+    ws1.cell(row=1, column=8).value = "H2 Occurrence"
+    ws1.cell(row=1, column=9).value = "Paragraph Occurrence"
 
+    for list_values in values:
+        ws1.cell(row=number, column=1).value=key
+        column = 2
+        for iteration in list_values:
+            ws1.cell(row=number, column=column).value = iteration
+            column += 1
+        number += 1
 
+red_text = Font(color="9C0006")
+red_fill = PatternFill(bgColor="FFC7CE")
+green_text = Font(color="FFFFFF")
+green_fill = PatternFill(bgColor="009c48")
 
+dxf = DifferentialStyle(font=red_text, fill=red_fill)
+dxf2 = DifferentialStyle(font=green_text, fill=green_fill)
 
+rule = Rule(type="containsText", operator="containsText", formula=['A1:N' + str(number) + '= "False"'], dxf=dxf)
+rule2 = Rule(type="containsText", operator="containsText", formula=['A1:N' + str(number) + '= "True"'], dxf=dxf2)
 
+ws1.conditional_formatting.add('A1:N' + str(number), rule)
+ws1.conditional_formatting.add('A1:N' + str(number), rule2)
 
-
+wb.save(filename = dest_filename)
 
 
 
